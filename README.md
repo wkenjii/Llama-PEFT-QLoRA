@@ -1,8 +1,8 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Dataset: Dolly-15k](https://img.shields.io/badge/Dataset-Dolly--15k-orange)](https://huggingface.co/datasets/databricks/databricks-dolly-15k)
 [![Model: Llama-3.2-1B](https://img.shields.io/badge/Model-Llama--3.2--1B-blue)](https://huggingface.co/meta-llama)
-[![Hugging Face: Adapter](https://img.shields.io/badge/HF-Adapter--QLoRA-yellow)](https://huggingface.co/wkenjii/llama3.2-1b-dolly15k-qlora-adapter)
-[![Hugging Face: Merged Model](https://img.shields.io/badge/HF-Merged--Model-blue)](https://huggingface.co/wkenjii/llama3.2-1b-dolly15k-merged)
+[![Hugging Face: Adapter](https://img.shields.io/badge/HF-Adapter--QLoRA-yellow)](https://huggingface.co/Kenjiii/llama3.2-1b-dolly15k-qlora-adapter)
+[![Hugging Face: Merged Model](https://img.shields.io/badge/HF-Merged--Model-blue)](https://huggingface.co/Kenjiii/llama3.2-1b-dolly15k-qlora)
 
 # 🦙 Llama-3.2-1B QLoRA Fine-tuning (PEFT + TRL)
 
