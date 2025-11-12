@@ -1,9 +1,26 @@
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Dataset: Dolly-15k](https://img.shields.io/badge/Dataset-Dolly--15k-orange)](https://huggingface.co/datasets/databricks/databricks-dolly-15k)
+[![Model: Llama-3.2-1B](https://img.shields.io/badge/Model-Llama--3.2--1B-blue)](https://huggingface.co/meta-llama)
+[![Hugging Face: Adapter](https://img.shields.io/badge/HF-Adapter--QLoRA-yellow)](https://huggingface.co/wkenjii/llama3.2-1b-dolly15k-qlora-adapter)
+[![Hugging Face: Merged Model](https://img.shields.io/badge/HF-Merged--Model-blue)](https://huggingface.co/wkenjii/llama3.2-1b-dolly15k-merged)
+
 # 🦙 Llama-3.2-1B QLoRA Fine-tuning (PEFT + TRL)
 
 Fine-tuning **Llama-3.2-1B** on **Databricks Dolly-15k** using **QLoRA** and **PEFT**.  
 This notebook demonstrates low-VRAM fine-tuning with 4-bit quantization and LoRA adapters.
 
 ---
+
+---
+
+## 🧩 Model Checkpoints
+
+| Type | Hugging Face Link | Description |
+|------|--------------------|--------------|
+| 🧠 **Adapter-only (QLoRA)** | [Kenjiii/llama3.2-1b-dolly15k-qlora-adapter](https://huggingface.co/Kenjiii/llama3.2-1b-dolly15k-qlora-adapter) | LoRA adapter weights for PEFT loading. Lightweight and ideal for continuing fine-tuning. |
+| 🦙 **Merged model (Full fine-tuned)** | [Kenjiii/llama3.2-1b-dolly15k-qlora](https://huggingface.co/Kenjiii/llama3.2-1b-dolly15k-qlora) | Base + adapter merged. Ready for direct inference without PEFT. |
+
+> 💡 The adapter version is much smaller (few hundred MB), while the merged model is full-sized (~2–3 GB). Use the adapter for further fine-tuning or lightweight deployment.
 
 ## 🚀 Overview
 
@@ -56,3 +73,81 @@ pip install -r requirements.txt
 | **Learning rate** | 2e-4 |
 | **Epochs** | 1 |
 
+## 💬 Inference Example
+
+```python
+from transformers import AutoTokenizer, AutoModelForCausalLM
+import torch
+
+base_model = "meta-llama/Llama-3.2-1B"
+MODEL = "Kenjiii/llama3.2-1b-dolly15k-qlora"
+
+tok = AutoTokenizer.from_pretrained(MODEL, legacy=True)
+tok.pad_token = tok.eos_token
+
+
+base_model = AutoModelForCausalLM.from_pretrained(
+    base_model,
+    torch_dtype=torch.bfloat16,
+    device_map="auto"
+)
+
+model = AutoModelForCausalLM.from_pretrained(
+    MODEL,
+    torch_dtype=torch.bfloat16,
+    device_map="auto"
+)
+
+prompt = "Explain what a GPU is, then give an example of how it’s used in AI."
+text   = f"Instruction:\n{prompt}\n\nResponse:\n"
+inputs = tok([text], return_tensors="pt").to(model.device)
+out    = base_model.generate(
+    **inputs, 
+    max_new_tokens=150
+)
+print(tok.decode(out[0], skip_special_tokens=True))
+
+prompt = "Explain what a GPU is, then give an example of how it’s used in AI."
+text   = f"Instruction:\n{prompt}\n\nResponse:\n"
+inputs = tok(text, return_tensors="pt").to(model.device)
+outputs_adapter = model.generate(**inputs, max_new_tokens=150)
+print(tok.decode(outputs_adapter[0], skip_special_tokens=True))
+```
+
+## 🧩 Sample Generations
+
+Below are examples comparing **base model** vs **fine-tuned model (QLoRA adapter)** on the same prompt.
+
+### 🧠 Prompt
+> Explain what a GPU is, then give an example of how it’s used in AI.
+
+---
+
+**Base Model (`meta-llama/Llama-3.2-1B`):**
+> A GPU is a graphics processing unit. It’s a special type of processor designed to accelerate graphics processing. GPUs are used in AI because they can process large amounts of data quickly, which makes them ideal for tasks like training neural networks and performing image recognition.  
+>  
+> In this course, we’ll explore how GPUs are used to accelerate machine learning…
+
+---
+
+**Fine-Tuned Model (QLoRA on Dolly-15k):**
+> A GPU, or graphics processing unit, is a specialized chip used to accelerate tasks such as training and inference of machine learning models.  
+> For example, a GPU may speed up the training of a neural network that predicts customer behavior or analyzes images in real time.
+
+---
+
+> 🟢 *The fine-tuned model produces shorter, more direct, and instruction-focused responses compared to the base model.*
+
+---
+
+## 🧾 License
+
+- **Code:** MIT License  
+- **Base Model:** [Meta Llama 3.2 License](https://ai.meta.com/llama/license/)  
+- **Dataset:** [Databricks Dolly-15k (CC BY-SA 3.0)](https://github.com/databricks/dolly)
+
+## 🙌 Acknowledgements
+
+- Meta AI — for Llama 3.2  
+- Databricks — for Dolly-15k dataset  
+- Hugging Face — for `Transformers`, `PEFT`, and `TRL` libraries
