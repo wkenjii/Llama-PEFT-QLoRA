@@ -6,12 +6,11 @@
 
 # 🦙 Llama-3.2-1B QLoRA Fine-tuning (PEFT + TRL)
 
-Fine-tuning **Llama-3.2-1B** on **Databricks Dolly-15k** using **QLoRA** and **PEFT**.  
+Instruction-tuning **Llama-3.2-1B** on **Databricks Dolly-15k** using **QLoRA** and **PEFT**, converting the base model into an instruction-following model.  
 This notebook demonstrates low-VRAM fine-tuning with 4-bit quantization and LoRA adapters.
 
 ---
 
----
 
 ## 🧩 Model Checkpoints
 
@@ -116,7 +115,7 @@ print(tok.decode(outputs_adapter[0], skip_special_tokens=True))
 
 ## 🧩 Sample Generations
 
-Below are examples comparing **base model** vs **fine-tuned model (QLoRA adapter)** on the same prompt.
+Below are examples comparing **base model** vs **instruction-tuned model (QLoRA adapter)** on the same prompt.
 
 ### 🧠 Prompt
 > Explain what a GPU is, then give an example of how it’s used in AI.
@@ -139,6 +138,22 @@ Below are examples comparing **base model** vs **fine-tuned model (QLoRA adapter
 > 🟢 *The fine-tuned model produces shorter, more direct, and instruction-focused responses compared to the base model.*
 
 ---
+
+---
+
+## 🔮 Future Work
+
+This project focused on **Supervised Fine-Tuning (SFT)** using the Dolly-15k dataset to teach the base model to follow human instructions.  
+The next logical step is to continue toward full **alignment** through **Reinforcement Learning from Human Feedback (RLHF)**.
+
+Planned directions include:
+- 🧠 **Reward Model Training** — Train a reward model to score generated responses based on quality, helpfulness, and safety.  
+- 🎯 **Preference Optimization** — Use algorithms such as **PPO (Proximal Policy Optimization)** or **DPO (Direct Preference Optimization)** to further align model outputs with human preferences.  
+- ⚙️ **Evaluation Framework** — Develop metrics to quantitatively measure instruction-following quality and response coherence.  
+- 🌐 **Extended Datasets** — Experiment with larger or more diverse instruction datasets for better generalization.
+
+> 💡 The goal of future work is to move from *instruction-following* to *preference-aligned* models, completing the SFT → RM → PPO pipeline.
+
 
 ## 🧾 License
 
